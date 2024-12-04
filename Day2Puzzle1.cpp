@@ -1,7 +1,7 @@
 #include <iostream>
 #include <vector>
 
-bool isReportDiffValid(int report_diff);
+bool isReportValid(const std::vector<int> &report);
 
 int main()
 {
@@ -1007,58 +1007,39 @@ int main()
         {65, 68, 70, 71, 73},
         {60, 63, 66, 68, 71, 74, 76, 79}};
 
-    std::vector<std::vector<int>> test_input = {{7, 6, 4, 2, 1},
-                                                {1, 2, 7, 8, 9},
-                                                {9, 7, 6, 2, 1},
-                                                {1, 3, 2, 4, 5},
-                                                {8, 6, 4, 4, 1},
-                                                {1, 3, 6, 7, 9}};
-    int safe_num = 0;
-    int report_diff;
-    int report_prev_diff;
-    bool is_report_valid;
+    unsigned int num_val_reports = 0;
 
     for (const auto &report : input)
     {
-        report_prev_diff = report[0] - report[1];
-        if (!isReportDiffValid(report_prev_diff))
+        if (isReportValid(report))
         {
-            continue;
-        }
-        is_report_valid = true;
-        for (auto it = report.begin() + 1; it != report.end() - 1; ++it)
-        {
-            report_diff = *it - *(it + 1);
-            if (report_prev_diff * report_diff <= 0)
-            {
-                is_report_valid = false;
-                break;
-            }
-            else if (!isReportDiffValid(report_diff))
-            {
-                is_report_valid = false;
-                break;
-            }
-        }
-        if (is_report_valid)
-        {
-            safe_num++;
+            num_val_reports++;
         }
     }
 
-    std::cout << safe_num << std::endl;
+    std::cout << num_val_reports << std::endl;
 }
 
-bool isReportDiffValid(int report_diff)
+bool isReportValid(const std::vector<int> &report)
 {
-    int abs = std::abs(report_diff);
-    if (abs > 3)
+    int diff;
+    int prev_diff;
+    for (unsigned int i = 0; i < (report.size() - 1); i++)
     {
-        return false;
-    }
-    else if (abs < 1)
-    {
-        return false;
+        diff = report[i] - report[i + 1];
+        if (std::abs(diff) > 3)
+        {
+            return false;
+        }
+        else if (std::abs(diff) < 1)
+        {
+            return false;
+        }
+        else if (i != 0 && diff * prev_diff <= 0)
+        {
+            return false;
+        }
+        prev_diff = diff;
     }
     return true;
 }
